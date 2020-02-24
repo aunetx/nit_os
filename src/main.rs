@@ -1,14 +1,36 @@
 #![no_std]
 #![no_main]
+#![feature(custom_test_frameworks)]
+#![test_runner(nit_os::test_runner)]
+#![reexport_test_harness_main = "test_main"]
 
-mod utils;
+use core::panic::PanicInfo;
+use nit_os::*;
 
-use utils::*;
-
-/// This function is the entry point of the kernel.
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    panic!("error of fejd");
-    // end of program
+    println_color!(red "Hello World!");
+    println_color!(green "Hello World!");
+    println!("Hello World!");
+
+    #[cfg(test)]
+    test_main();
+
     loop {}
+}
+
+/// This function is called on panic.
+// if not in test, print to vga buffer
+#[panic_handler]
+#[cfg(not(test))]
+fn panic(info: &PanicInfo) -> ! {
+    println_color!(vga::Color::LightGray, vga::Color::Red, "[ kernel panic ]");
+    println_color!(red " {}", info);
+    loop {}
+}
+
+#[cfg(test)]
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    nit_os::test_panic_handler(info)
 }

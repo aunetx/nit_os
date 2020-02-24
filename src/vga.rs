@@ -1,22 +1,26 @@
+use core::fmt;
 use lazy_static::lazy_static;
 use spin::Mutex;
 use volatile::Volatile;
 
+#[cfg(test)]
+use crate::{serial_print, serial_println};
+
+const BUFFER_HEIGHT: usize = 25;
+const BUFFER_WIDTH: usize = 80;
+const DEFAULT_FG_COLOR: Color = Color::Yellow;
+const DEFAULT_BG_COLOR: Color = Color::Black;
+
 lazy_static! {
-    /// The actual VGA writer to be used by the kernel.
+    /// A global `Writer` instance that can be used for printing to the VGA text buffer.
+    ///
+    /// Used by the `print!` and `println!` macros, and the colorful equivalents.
     pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
         column_position: 0,
         color_code: ColorCode::new(Color::Yellow, Color::Black),
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
     });
 }
-
-// ! ------------------ buffer ------------------
-
-const BUFFER_HEIGHT: usize = 25;
-const BUFFER_WIDTH: usize = 80;
-const DEFAULT_FG_COLOR: Color = Color::Yellow;
-const DEFAULT_BG_COLOR: Color = Color::Black;
 
 /// A struct representing the entire VGA buffer.
 #[repr(transparent)]
@@ -78,11 +82,13 @@ pub struct Writer {
 
 impl Writer {
     /// Set color of the VGA writer.
+    #[allow(dead_code)]
     pub fn set_color(&mut self, fg_color: Color, bg_color: Color) {
         self.color_code = ColorCode::new(fg_color, bg_color);
     }
 
     /// Reset color of the VGA writer to the default ones.
+    #[allow(dead_code)]
     pub fn reset_color(&mut self) {
         self.color_code = ColorCode::new(DEFAULT_FG_COLOR, DEFAULT_BG_COLOR);
     }
@@ -144,8 +150,8 @@ impl Writer {
     }
 }
 
-impl core::fmt::Write for Writer {
-    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+impl fmt::Write for Writer {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
         self.write_string(s);
         Ok(())
     }
@@ -167,24 +173,24 @@ macro_rules! println {
 #[macro_export]
 macro_rules! print_color {
     (red $($arg:tt)*) => (
-        crate::vga::WRITER.lock().set_color(crate::vga::Color::Red, crate::vga::Color::Black);
+        $crate::WRITER.lock().set_color($crate::Color::Red, $crate::Color::Black);
         $crate::vga::_print(format_args!($($arg)*));
-        crate::vga::WRITER.lock().reset_color();
+        $crate::WRITER.lock().reset_color();
     );
     (green $($arg:tt)*) => (
-        crate::vga::WRITER.lock().set_color(crate::vga::Color::Green, crate::vga::Color::Black);
+        $crate::WRITER.lock().set_color($crate::Color::Green, $crate::Color::Black);
         $crate::vga::_print(format_args!($($arg)*));
-        crate::vga::WRITER.lock().reset_color();
+        $crate::WRITER.lock().reset_color();
     );
     (blue $($arg:tt)*) => (
-        crate::vga::WRITER.lock().set_color(crate::vga::Color::Blue, crate::vga::Color::Black);
+        $crate::WRITER.lock().set_color($crate::Color::Blue, $crate::Color::Black);
         $crate::vga::_print(format_args!($($arg)*));
-        crate::vga::WRITER.lock().reset_color();
+        $crate::WRITER.lock().reset_color();
     );
     ($fg:expr, $bg:expr, $($arg:tt)*) => (
-        crate::vga::WRITER.lock().set_color($fg, $bg);
+        $crate::WRITER.lock().set_color($fg, $bg);
         $crate::vga::_print(format_args!($($arg)*));
-        crate::vga::WRITER.lock().reset_color();
+        $crate::WRITER.lock().reset_color();
     );
 }
 
@@ -203,4 +209,34 @@ macro_rules! println_color {
 pub fn _print(args: core::fmt::Arguments) {
     use core::fmt::Write;
     WRITER.lock().write_fmt(args).unwrap();
+}
+
+#[test_case]
+fn test_println_simple() {
+    serial_print!("test_println... ");
+    println!("test_println_simple output");
+    serial_println!("[ok]");
+}
+
+#[test_case]
+fn test_println_many() {
+    serial_print!("test_println_many... ");
+    for _ in 0..200 {
+        println!("test_println_many output");
+    }
+    serial_println!("[ok]");
+}
+
+#[test_case]
+fn test_println_output() {
+    serial_print!("test_println_output... ");
+
+    let s = "Some test string that fits on a single line";
+    println!("{}", s);
+    for (i, c) in s.chars().enumerate() {
+        let screen_char = WRITER.lock().buffer.chars[BUFFER_HEIGHT - 2][i].read();
+        assert_eq!(char::from(screen_char.ascii_character), c);
+    }
+
+    serial_println!("[ok]");
 }
