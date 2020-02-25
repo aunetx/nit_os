@@ -8,6 +8,10 @@ edition = "2018"
 name = "should_panic"
 harness = false
 
+[[test]]
+name = "stack_overflow"
+harness = false
+
 [dependencies]
 bootloader = "0.8.7"
 volatile = "0.2.6"
@@ -15,6 +19,8 @@ lazy_static = {version ="1.4.0",features = ["spin_no_std"]}
 spin = "0.5.2"
 x86_64 = "0.9.3"
 uart_16550 = "0.2.3"
+pic8259_simple = "0.1.1"
+pc-keyboard = "0.5.0"
 
 [package.metadata.bootimage]
 test-args = ["-device", "isa-debug-exit,iobase=0xf4,iosize=0x04", "-serial", "stdio", "-display", "none"]

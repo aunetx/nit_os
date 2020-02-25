@@ -22,6 +22,8 @@ lazy_static! {
     });
 }
 
+// ! ------------- buffer -------------
+
 /// A struct representing the entire VGA buffer.
 #[repr(transparent)]
 struct Buffer {
@@ -148,6 +150,13 @@ impl Writer {
             });
         }
     }
+
+    /// Clear the entire screen
+    pub fn clear_screen(&mut self) {
+        for row in 1..BUFFER_HEIGHT {
+            self.clear_row(row);
+        }
+    }
 }
 
 impl fmt::Write for Writer {
@@ -157,11 +166,26 @@ impl fmt::Write for Writer {
     }
 }
 
+// ! ------------- macros -------------
+
+#[doc(hidden)]
+pub fn _print(args: core::fmt::Arguments) {
+    use core::fmt::Write;
+    use x86_64::instructions::interrupts;
+
+    // prevent deadlocks
+    interrupts::without_interrupts(|| {
+        WRITER.lock().write_fmt(args).unwrap();
+    });
+}
+
+/// Print a line of text to the VGA buffer.
 #[macro_export]
 macro_rules! print {
     ($($arg:tt)*) => ($crate::vga::_print(format_args!($($arg)*)));
 }
 
+/// Print a line of text to the VGA buffer, and append it with a newline.
 #[macro_export]
 macro_rules! println {
     () => ($crate::print!("\n"));
@@ -194,6 +218,8 @@ macro_rules! print_color {
     );
 }
 
+/// Print a line of text to the VGA buffer with a given color, and append it with a newline.
+/// Defaults are : `red`, `green` and `blue`.
 #[macro_export]
 macro_rules! println_color {
     ($tk:tt) => ($crate::print_color!($tk "\n"));
@@ -205,11 +231,15 @@ macro_rules! println_color {
     ($fg:expr, $bg:expr, $($arg:tt)*) => ($crate::print_color!($fg, $bg,  "{}\n", format_args!($($arg)*)));
 }
 
-#[doc(hidden)]
-pub fn _print(args: core::fmt::Arguments) {
-    use core::fmt::Write;
-    WRITER.lock().write_fmt(args).unwrap();
+/// Clear the entire screen.
+#[macro_export]
+macro_rules! clear_screen {
+    () => {
+        $crate::WRITER.lock().clear_screen();
+    };
 }
+
+// ! ------------- tests -------------
 
 #[test_case]
 fn test_println_simple() {
@@ -229,14 +259,46 @@ fn test_println_many() {
 
 #[test_case]
 fn test_println_output() {
+    use core::fmt::Write;
+    use x86_64::instructions::interrupts;
+
     serial_print!("test_println_output... ");
 
     let s = "Some test string that fits on a single line";
-    println!("{}", s);
-    for (i, c) in s.chars().enumerate() {
-        let screen_char = WRITER.lock().buffer.chars[BUFFER_HEIGHT - 2][i].read();
-        assert_eq!(char::from(screen_char.ascii_character), c);
-    }
+    interrupts::without_interrupts(|| {
+        let mut writer = WRITER.lock();
+        writeln!(writer, "\n{}", s).expect("writeln failed");
+        for (i, c) in s.chars().enumerate() {
+            let screen_char = writer.buffer.chars[BUFFER_HEIGHT - 2][i].read();
+            assert_eq!(char::from(screen_char.ascii_character), c);
+        }
+    });
+
+    serial_println!("[ok]");
+}
+
+#[test_case]
+fn test_print_color() {
+    serial_print!("test_println_color... ");
+
+    println_color!(red "2 + 2 = {}", 2 + 2);
+    print_color!(red "2 + 2 = {}", 2 + 2);
+    println_color!(red);
+
+    print_color!(Color::Green, Color::White, "2 + 2 = {}", 2 + 2);
+    print_color!(Color::Red, Color::Black, "2 + 2 = {}", 2 + 2);
+    println_color!(Color::Red, Color::Black);
+
+    serial_println!("[ok]");
+}
+
+#[test_case]
+fn test_clear_screen() {
+    serial_print!("test_clear_screen... ");
+
+    clear_screen!();
+    println!("Hello world!");
+    clear_screen!();
 
     serial_println!("[ok]");
 }

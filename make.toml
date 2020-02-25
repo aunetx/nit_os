@@ -1,0 +1,17 @@
+[tasks.build]
+command = "cargo"
+args = ["xbuild"]
+
+[tasks.run]
+command = "cargo"
+args = ["xrun"]
+
+[tasks.test]
+command = "cargo"
+args = ["xtest"]
+
+[tasks.build_test]
+dependencies = [
+    "build",
+    "test"
+]

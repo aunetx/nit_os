@@ -13,10 +13,12 @@ pub extern "C" fn _start() -> ! {
     println_color!(green "Hello World!");
     println!("Hello World!");
 
+    nit_os::init();
+
     #[cfg(test)]
     test_main();
 
-    loop {}
+    hlt_loop();
 }
 
 /// This function is called on panic.
@@ -26,9 +28,11 @@ pub extern "C" fn _start() -> ! {
 fn panic(info: &PanicInfo) -> ! {
     println_color!(vga::Color::LightGray, vga::Color::Red, "[ kernel panic ]");
     println_color!(red " {}", info);
-    loop {}
+
+    hlt_loop();
 }
 
+// if in test, print to serial and exit QEMU
 #[cfg(test)]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
