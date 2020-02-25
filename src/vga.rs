@@ -84,13 +84,11 @@ pub struct Writer {
 
 impl Writer {
     /// Set color of the VGA writer.
-    #[allow(dead_code)]
     pub fn set_color(&mut self, fg_color: Color, bg_color: Color) {
         self.color_code = ColorCode::new(fg_color, bg_color);
     }
 
     /// Reset color of the VGA writer to the default ones.
-    #[allow(dead_code)]
     pub fn reset_color(&mut self) {
         self.color_code = ColorCode::new(DEFAULT_FG_COLOR, DEFAULT_BG_COLOR);
     }
@@ -156,6 +154,7 @@ impl Writer {
         for row in 1..BUFFER_HEIGHT {
             self.clear_row(row);
         }
+        self.column_position = 0;
     }
 }
 

@@ -1,4 +1,4 @@
-use crate::{gdt, print, println};
+use crate::{clear_screen, gdt, print, println};
 use lazy_static::lazy_static;
 use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
 
@@ -74,14 +74,13 @@ impl InterruptIndex {
 // ! ------------- interrupts handlers -------------
 
 extern "x86-interrupt" fn timer_interrupt_handler(_stack_frame: &mut InterruptStackFrame) {
-    print!(".");
-
     unsafe {
         PICS.lock()
             .notify_end_of_interrupt(InterruptIndex::Timer.as_u8())
     }
 }
 
+// hint : to know the codepoint of the character typed, use `char.escape_unicode()`
 extern "x86-interrupt" fn keyboard_interrupt_handler(_stack_frame: &mut InterruptStackFrame) {
     use pc_keyboard::{layouts, DecodedKey, HandleControl, Keyboard, ScancodeSet1};
     use spin::Mutex;
@@ -100,6 +99,7 @@ extern "x86-interrupt" fn keyboard_interrupt_handler(_stack_frame: &mut Interrup
     if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
         if let Some(key) = keyboard.process_keyevent(key_event) {
             match key {
+                DecodedKey::Unicode('\u{8}') => clear_screen!(),
                 DecodedKey::Unicode(character) => print!("{}", character),
                 DecodedKey::RawKey(key) => print!("{:?}", key),
             }
