@@ -20,7 +20,7 @@ pub extern "C" fn _start() -> ! {
     panic!("Execution continued after stack overflow");
 }
 
-#[allow(unconditonal_recursion)]
+#[allow(unconditional_recursion)]
 fn stack_overflow() {
     stack_overflow();
 }

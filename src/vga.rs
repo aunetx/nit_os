@@ -231,6 +231,22 @@ macro_rules! println_color {
     ($fg:expr, $bg:expr, $($arg:tt)*) => ($crate::print_color!($fg, $bg,  "{}\n", format_args!($($arg)*)));
 }
 
+/// Print kernel boot informations to the screen.
+#[macro_export]
+macro_rules! phase {
+    (done) => (
+        $crate::println_color!(green "[ done ]");
+    );
+    ($e:expr, $($arg:tt)*) => (
+        $crate::print_color!(Color::LightGray, Color::Black, "[ {} ] ... ", format_args!($($arg)*));
+        $e;
+        $crate::phase!(done);
+    );
+    ($($arg:tt)*) => (
+        $crate::print_color!(Color::LightGray, Color::Black,  "[ {} ] ... ", format_args!($($arg)*));
+    );
+}
+
 /// Clear the entire screen.
 #[macro_export]
 macro_rules! clear_screen {

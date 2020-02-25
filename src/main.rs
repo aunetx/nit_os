@@ -9,11 +9,7 @@ use nit_os::*;
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    println_color!(red "Hello World!");
-    println_color!(green "Hello World!");
-    println!("Hello World!");
-
-    nit_os::init();
+    phase!(nit_os::init(), "kernel init");
 
     #[cfg(test)]
     test_main();
