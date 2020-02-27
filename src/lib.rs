@@ -9,7 +9,6 @@
 use core::panic::PanicInfo;
 
 // submodules exports
-pub mod gdt;
 pub mod interrupts;
 pub mod serial;
 pub mod vga;
@@ -22,8 +21,8 @@ pub mod vga;
 /// - init PICs chips : `Programmable Interrupt Controller`
 /// - enable interrupts with asm instruction `sti`
 pub fn init() {
-    gdt::init();
-    interrupts::init_idt();
+    interrupts::gdt::init();
+    interrupts::idt::init();
     unsafe { interrupts::PICS.lock().initialize() };
     x86_64::instructions::interrupts::enable();
 }
