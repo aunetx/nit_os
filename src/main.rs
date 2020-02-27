@@ -10,6 +10,7 @@ use nit_os::*;
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     phase!(nit_os::init(), "kernel init");
+    println!("Everything seems to work!");
 
     #[cfg(test)]
     test_main();

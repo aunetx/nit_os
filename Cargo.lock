@@ -14,9 +14,9 @@ checksum = "cf1de2fe8c75bc145a2f577add951f8134889b4795d47466a54a5c846d691693"
 
 [[package]]
 name = "bootloader"
-version = "0.8.7"
+version = "0.8.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2ad5da9744106162b2fae173e8cd179da056f6c989a13c3207ef2470df3db1b8"
+checksum = "c3ed4f735c4e455ba86a3d2939b1c0729414153642106c9d035693355630a42c"
 
 [[package]]
 name = "cpuio"
@@ -70,9 +70,9 @@ checksum = "6e63cff320ae2c57904679ba7cb63280a3dc4613885beafb148ee7bf9aa9042d"
 
 [[package]]
 name = "uart_16550"
-version = "0.2.3"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "55d579f4b9c7b20b4828aea4472c7271d296a6ba0a9490c7c4c8e6734d93fe73"
+checksum = "d44b0f30cb82b0fbc15b78ade1064226529ad52028bc8cb8accb98ff6f3d7131"
 dependencies = [
  "bitflags",
  "x86_64",
@@ -86,9 +86,9 @@ checksum = "6af0edf5b4faacc31fc51159244d78d65ec580f021afcef7bd53c04aeabc7f29"
 
 [[package]]
 name = "x86_64"
-version = "0.9.3"
+version = "0.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "090d042b730e5a5956dc3cde826b8c0d83e3b6dcea5a07a5d4cc6f0b5860a5dc"
+checksum = "4e6a3f047ad0844d3b4794f34d1095aefb918241064663d4163db8c7d4a76edf"
 dependencies = [
  "bit_field",
  "bitflags",
