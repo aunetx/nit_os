@@ -7,14 +7,18 @@
 use core::panic::PanicInfo;
 use nit_os::*;
 
+/// The starting point of our kernel.
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     phase!(nit_os::init(), "kernel init");
+
     println!("Everything seems to work!");
 
+    // define the entry of unit tests
     #[cfg(test)]
     test_main();
 
+    // halt the kernel
     hlt_loop();
 }
 
@@ -29,7 +33,7 @@ pub fn panic(info: &PanicInfo) -> ! {
     hlt_loop();
 }
 
-// if in test, print to serial and exit QEMU
+// if in unit test, print to serial and exit QEMU
 #[cfg(test)]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {

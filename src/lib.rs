@@ -5,14 +5,22 @@
 #![test_runner(crate::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
+// external crates used
 use core::panic::PanicInfo;
 
+// submodules exports
 pub mod gdt;
 pub mod interrupts;
 pub mod serial;
 pub mod vga;
-pub use vga::*;
 
+/// Initialize our kernel.
+///
+/// The default steps are :
+/// - init GDT : `Global Descriptor Table`
+/// - init IDT : `Interrupt Descriptor Table`
+/// - init PICs chips : `Programmable Interrupt Controller`
+/// - enable interrupts with asm instruction `sti`
 pub fn init() {
     gdt::init();
     interrupts::init_idt();
@@ -20,6 +28,7 @@ pub fn init() {
     x86_64::instructions::interrupts::enable();
 }
 
+/// A function used during testing : run all the given tests.
 pub fn test_runner(tests: &[&dyn Fn()]) {
     serial_println!("Running {} tests", tests.len());
     for test in tests {
@@ -28,6 +37,7 @@ pub fn test_runner(tests: &[&dyn Fn()]) {
     exit_qemu(QemuExitCode::Success);
 }
 
+/// A function used during testing if test failed : print our error and exit.
 pub fn test_panic_handler(info: &PanicInfo) -> ! {
     serial_println!("[failed]\n");
     serial_println!("Error: {}\n", info);
@@ -35,12 +45,14 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
     loop {}
 }
 
+/// Function halting the kernel : an endless loop catching interrupts.
 pub fn hlt_loop() -> ! {
     loop {
         x86_64::instructions::hlt();
     }
 }
 
+/// Defines the QEMU exit codes to be used when exiting with the `isa-debug-exit` argument.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u32)]
 pub enum QemuExitCode {
@@ -48,6 +60,7 @@ pub enum QemuExitCode {
     Failed = 0x11,
 }
 
+/// Exit QEMU via the `isa-debug-exit` port, with the given exit code.
 pub fn exit_qemu(exit_code: QemuExitCode) {
     use x86_64::instructions::port::Port;
 
@@ -57,7 +70,7 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
     }
 }
 
-/// Entry point for `cargo xtest`
+/// Entry point of integration tests.
 #[cfg(test)]
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
@@ -66,6 +79,7 @@ pub extern "C" fn _start() -> ! {
     loop {}
 }
 
+/// Panic handler for integration tests.
 #[cfg(test)]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {

@@ -1,14 +1,20 @@
+// internal functions used
 use core::fmt;
+
+// external crates used
+use core::fmt::Write;
 use lazy_static::lazy_static;
 use spin::Mutex;
 use volatile::Volatile;
+use x86_64::instructions::interrupts;
 
-#[cfg(test)]
-use crate::{serial_print, serial_println};
-
+/// Height of the VGA buffer.
 const BUFFER_HEIGHT: usize = 25;
+/// Width of the VGA buffer.
 const BUFFER_WIDTH: usize = 80;
+/// Default foreground color of the VGA buffer.
 const DEFAULT_FG_COLOR: Color = Color::Yellow;
+/// Default background color of the VGA buffer.
 const DEFAULT_BG_COLOR: Color = Color::Black;
 
 lazy_static! {
@@ -169,9 +175,6 @@ impl fmt::Write for Writer {
 
 #[doc(hidden)]
 pub fn _print(args: core::fmt::Arguments) {
-    use core::fmt::Write;
-    use x86_64::instructions::interrupts;
-
     // prevent deadlocks
     interrupts::without_interrupts(|| {
         WRITER.lock().write_fmt(args).unwrap();
@@ -196,24 +199,24 @@ macro_rules! println {
 #[macro_export]
 macro_rules! print_color {
     (red $($arg:tt)*) => (
-        $crate::WRITER.lock().set_color($crate::Color::Red, $crate::Color::Black);
+        $crate::vga::WRITER.lock().set_color($crate::vga::Color::Red, $crate::vga::Color::Black);
         $crate::vga::_print(format_args!($($arg)*));
-        $crate::WRITER.lock().reset_color();
+        $crate::vga::WRITER.lock().reset_color();
     );
     (green $($arg:tt)*) => (
-        $crate::WRITER.lock().set_color($crate::Color::Green, $crate::Color::Black);
+        $crate::vga::WRITER.lock().set_color($crate::vga::Color::Green, $crate::vga::Color::Black);
         $crate::vga::_print(format_args!($($arg)*));
-        $crate::WRITER.lock().reset_color();
+        $crate::vga::WRITER.lock().reset_color();
     );
     (blue $($arg:tt)*) => (
-        $crate::WRITER.lock().set_color($crate::Color::Blue, $crate::Color::Black);
+        $crate::vga::WRITER.lock().set_color($crate::vga::Color::Blue, $crate::vga::Color::Black);
         $crate::vga::_print(format_args!($($arg)*));
-        $crate::WRITER.lock().reset_color();
+        $crate::vga::WRITER.lock().reset_color();
     );
     ($fg:expr, $bg:expr, $($arg:tt)*) => (
-        $crate::WRITER.lock().set_color($fg, $bg);
+        $crate::vga::WRITER.lock().set_color($fg, $bg);
         $crate::vga::_print(format_args!($($arg)*));
-        $crate::WRITER.lock().reset_color();
+        $crate::vga::WRITER.lock().reset_color();
     );
 }
 
@@ -237,12 +240,12 @@ macro_rules! phase {
         $crate::println_color!(green "[ done ]");
     );
     ($e:expr, $($arg:tt)*) => (
-        $crate::print_color!(Color::LightGray, Color::Black, "[ {} ] ... ", format_args!($($arg)*));
+        $crate::print_color!(vga::Color::LightGray, vga::Color::Black, "[ {} ] ... ", format_args!($($arg)*));
         $e;
         $crate::phase!(done);
     );
     ($($arg:tt)*) => (
-        $crate::print_color!(Color::LightGray, Color::Black,  "[ {} ] ... ", format_args!($($arg)*));
+        $crate::print_color!(vga::Color::LightGray, vga::Color::Black,  "[ {} ] ... ", format_args!($($arg)*));
     );
 }
 
@@ -250,33 +253,38 @@ macro_rules! phase {
 #[macro_export]
 macro_rules! clear_screen {
     () => {
-        $crate::WRITER.lock().clear_screen();
+        $crate::vga::WRITER.lock().clear_screen();
     };
 }
 
 // ! ------------- tests -------------
 
+// internal functions used
+#[cfg(test)]
+use crate::{serial_print, serial_println};
+
 #[test_case]
 fn test_println_simple() {
     serial_print!("test_println... ");
+
     println!("test_println_simple output");
+
     serial_println!("[ok]");
 }
 
 #[test_case]
 fn test_println_many() {
     serial_print!("test_println_many... ");
+
     for _ in 0..200 {
         println!("test_println_many output");
     }
+
     serial_println!("[ok]");
 }
 
 #[test_case]
 fn test_println_output() {
-    use core::fmt::Write;
-    use x86_64::instructions::interrupts;
-
     serial_print!("test_println_output... ");
 
     let s = "Some test string that fits on a single line";

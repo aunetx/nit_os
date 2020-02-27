@@ -1,8 +1,10 @@
+// external crates used
 use lazy_static::lazy_static;
 use spin::Mutex;
 use uart_16550::SerialPort;
 
 lazy_static! {
+    /// A serial port used to communicate with QEMU host, binded to port `0x3F8`.
     pub static ref SERIAL1: Mutex<SerialPort> = {
         let mut serial_port = unsafe { SerialPort::new(0x3F8) };
         serial_port.init();
