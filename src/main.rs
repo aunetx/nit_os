@@ -20,9 +20,9 @@ pub extern "C" fn _start() -> ! {
 
 /// This function is called on panic.
 // if not in test, print to vga buffer
-#[panic_handler]
 #[cfg(not(test))]
-fn panic(info: &PanicInfo) -> ! {
+#[panic_handler]
+pub fn panic(info: &PanicInfo) -> ! {
     println_color!(vga::Color::LightGray, vga::Color::Red, "[ kernel panic ]");
     println_color!(red " {}", info);
 
