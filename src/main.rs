@@ -4,13 +4,16 @@
 #![test_runner(nit_os::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
-use core::panic::PanicInfo;
+// the actual library
 use nit_os::*;
+
+// external crates used
+use core::panic::PanicInfo;
 
 /// The starting point of our kernel.
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    phase!(nit_os::init(), "kernel init");
+    phase!(init(), "kernel init");
 
     println!("Everything seems to work!");
 
@@ -37,5 +40,5 @@ pub fn panic(info: &PanicInfo) -> ! {
 #[cfg(test)]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    nit_os::test_panic_handler(info)
+    test_panic_handler(info)
 }

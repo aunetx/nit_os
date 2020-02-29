@@ -46,6 +46,7 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
 
 /// Function halting the kernel : an endless loop catching interrupts.
 pub fn hlt_loop() -> ! {
+    x86_64::instructions::interrupts::disable();
     loop {
         x86_64::instructions::hlt();
     }
