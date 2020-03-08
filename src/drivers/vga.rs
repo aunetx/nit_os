@@ -184,7 +184,7 @@ pub fn _print(args: core::fmt::Arguments) {
 /// Print a line of text to the VGA buffer.
 #[macro_export]
 macro_rules! print {
-    ($($arg:tt)*) => ($crate::vga::_print(format_args!($($arg)*)));
+    ($($arg:tt)*) => ($crate::drivers::vga::_print(format_args!($($arg)*)));
 }
 
 /// Print a line of text to the VGA buffer, and append it with a newline.
@@ -199,24 +199,24 @@ macro_rules! println {
 #[macro_export]
 macro_rules! print_color {
     (red $($arg:tt)*) => (
-        $crate::vga::WRITER.lock().set_color($crate::vga::Color::Red, $crate::vga::Color::Black);
-        $crate::vga::_print(format_args!($($arg)*));
-        $crate::vga::WRITER.lock().reset_color();
+        $crate::drivers::vga::WRITER.lock().set_color($crate::drivers::vga::Color::Red, $crate::drivers::vga::Color::Black);
+        $crate::drivers::vga::_print(format_args!($($arg)*));
+        $crate::drivers::vga::WRITER.lock().reset_color();
     );
     (green $($arg:tt)*) => (
-        $crate::vga::WRITER.lock().set_color($crate::vga::Color::Green, $crate::vga::Color::Black);
-        $crate::vga::_print(format_args!($($arg)*));
-        $crate::vga::WRITER.lock().reset_color();
+        $crate::drivers::vga::WRITER.lock().set_color($crate::drivers::vga::Color::Green, $crate::drivers::vga::Color::Black);
+        $crate::drivers::vga::_print(format_args!($($arg)*));
+        $crate::drivers::vga::WRITER.lock().reset_color();
     );
     (blue $($arg:tt)*) => (
-        $crate::vga::WRITER.lock().set_color($crate::vga::Color::Blue, $crate::vga::Color::Black);
-        $crate::vga::_print(format_args!($($arg)*));
-        $crate::vga::WRITER.lock().reset_color();
+        $crate::drivers::vga::WRITER.lock().set_color($crate::drivers::vga::Color::Blue, $crate::drivers::vga::Color::Black);
+        $crate::drivers::vga::_print(format_args!($($arg)*));
+        $crate::drivers::vga::WRITER.lock().reset_color();
     );
     ($fg:expr, $bg:expr, $($arg:tt)*) => (
-        $crate::vga::WRITER.lock().set_color($fg, $bg);
-        $crate::vga::_print(format_args!($($arg)*));
-        $crate::vga::WRITER.lock().reset_color();
+        $crate::drivers::vga::WRITER.lock().set_color($fg, $bg);
+        $crate::drivers::vga::_print(format_args!($($arg)*));
+        $crate::drivers::vga::WRITER.lock().reset_color();
     );
 }
 
@@ -240,12 +240,12 @@ macro_rules! phase {
         $crate::println_color!(green "[ done ]");
     );
     ($e:expr; $($arg:tt)*) => (
-        $crate::print_color!(vga::Color::LightGray, vga::Color::Black, "[ {} ] ... ", format_args!($($arg)*));
+        $crate::print_color!(drivers::vga::Color::LightGray, drivers::vga::Color::Black, "[ {} ] ... ", format_args!($($arg)*));
         $e;
         $crate::phase!(done);
     );
     ($($arg:tt)*) => (
-        $crate::print_color!(vga::Color::LightGray, vga::Color::Black,  "[ {} ] ... ", format_args!($($arg)*));
+        $crate::print_color!(drivers::vga::Color::LightGray, drivers::vga::Color::Black,  "[ {} ] ... ", format_args!($($arg)*));
     );
 }
 
@@ -253,7 +253,7 @@ macro_rules! phase {
 #[macro_export]
 macro_rules! clear_screen {
     () => {
-        $crate::vga::WRITER.lock().clear_screen();
+        $crate::drivers::vga::WRITER.lock().clear_screen();
     };
 }
 

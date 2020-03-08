@@ -15,14 +15,14 @@ harness = false
 [dependencies]
 
 # mandatory
-bootloader = { version = "0.8.8", features = ["map_physical_memory"]}
-lazy_static = {version ="1.4.0",features = ["spin_no_std"]}
+bootloader = { version = "0.8.9", features = ["map_physical_memory"]}
+lazy_static = {version ="1.4.0", features = ["spin_no_std"]}
 volatile = "0.2.6"
 spin = "0.5.2"
-x86_64 = "0.9.5"
+x86_64 = "0.9.6"
 
-# simplify
-linked_list_allocator = "0.7.0"
+# helpers
+linked_list_allocator = "0.8.0"
 
 # hardware-dependent
 uart_16550 = "0.2.4"

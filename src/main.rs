@@ -40,7 +40,11 @@ fn kernel_main(_boot_info: &'static BootInfo) -> ! {
 #[cfg(not(test))]
 #[panic_handler]
 pub fn panic(info: &PanicInfo) -> ! {
-    println_color!(vga::Color::LightGray, vga::Color::Red, "[ kernel panic ]");
+    println_color!(
+        drivers::vga::Color::LightGray,
+        drivers::vga::Color::Red,
+        "[ kernel panic ]"
+    );
     println_color!(red " {}", info);
 
     hlt_loop();

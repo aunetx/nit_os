@@ -12,7 +12,7 @@ use nit_os::{
     init,
     memory::{
         frame_alloc::{self, BootInfoFrameAllocator},
-        heap::{self, HEAP_SIZE},
+        heap_alloc::{self, HEAP_SIZE},
     },
     serial_print, serial_println,
 };
@@ -31,7 +31,7 @@ fn main(boot_info: &'static BootInfo) -> ! {
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
     let mut mapper = unsafe { frame_alloc::init(phys_mem_offset) };
     let mut frame_allocator = unsafe { BootInfoFrameAllocator::init(&boot_info.memory_map) };
-    heap::init(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
+    heap_alloc::init(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
 
     test_main();
     loop {}
@@ -69,5 +69,17 @@ fn many_boxes() {
         let x = Box::new(i);
         assert_eq!(*x, i);
     }
+    serial_println!("[ok]");
+}
+
+#[test_case]
+fn many_boxes_long_lived() {
+    serial_print!("many_boxes_long_lived... ");
+    let long_lived = Box::new(1); // new
+    for i in 0..HEAP_SIZE {
+        let x = Box::new(i);
+        assert_eq!(*x, i);
+    }
+    assert_eq!(*long_lived, 1); // new
     serial_println!("[ok]");
 }

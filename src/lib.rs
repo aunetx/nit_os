@@ -1,6 +1,9 @@
 #![no_std]
 #![cfg_attr(test, no_main)]
+#![feature(const_fn)]
 #![feature(custom_test_frameworks)]
+#![feature(alloc_layout_extra)]
+#![feature(const_in_array_repeat_expressions)]
 #![feature(abi_x86_interrupt)]
 #![feature(alloc_error_handler)]
 #![test_runner(crate::test_runner)]
@@ -13,10 +16,9 @@ extern crate alloc;
 use core::panic::PanicInfo;
 
 // submodules exports
+pub mod drivers;
 pub mod interrupts;
 pub mod memory;
-pub mod serial;
-pub mod vga;
 
 /// Initialize our kernel.
 ///
