@@ -22,7 +22,7 @@ fn alloc_error_handler(layout: alloc::alloc::Layout) -> ! {
 /// Permits to init the heap.
 ///
 /// Needs to be executed before any utilisation of the heap.
-pub fn init_heap(
+pub fn init(
     mapper: &mut impl Mapper<Size4KiB>,
     frame_allocator: &mut impl FrameAllocator<Size4KiB>,
 ) -> Result<(), MapToError<Size4KiB>> {
