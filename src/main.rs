@@ -7,15 +7,25 @@
 // the actual library
 use nit_os::*;
 
+// enable the builtin alloc crate
+extern crate alloc;
+
 // external crates used
+use bootloader::{entry_point, BootInfo};
 use core::panic::PanicInfo;
+
+// permits to check the signature of the entry point
+entry_point!(kernel_main);
 
 /// The starting point of our kernel.
 #[no_mangle]
-pub extern "C" fn _start() -> ! {
-    phase!(init(), "kernel init");
-
+fn kernel_main(_boot_info: &'static BootInfo) -> ! {
+    phase!(init(); "kernel init");
     println!("Everything seems to work!");
+
+    // ! ------------- testing part -------------
+
+    // ! ------------- end of testing part -------------
 
     // define the entry of unit tests
     #[cfg(test)]

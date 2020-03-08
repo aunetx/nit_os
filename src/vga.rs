@@ -239,7 +239,7 @@ macro_rules! phase {
     (done) => (
         $crate::println_color!(green "[ done ]");
     );
-    ($e:expr, $($arg:tt)*) => (
+    ($e:expr; $($arg:tt)*) => (
         $crate::print_color!(vga::Color::LightGray, vga::Color::Black, "[ {} ] ... ", format_args!($($arg)*));
         $e;
         $crate::phase!(done);

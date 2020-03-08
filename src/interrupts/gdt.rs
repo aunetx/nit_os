@@ -1,4 +1,4 @@
-// external macros used
+// external crates used
 use lazy_static::lazy_static;
 use x86_64::{
     instructions::{segmentation::set_cs, tables::load_tss},

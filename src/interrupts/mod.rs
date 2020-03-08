@@ -1,5 +1,3 @@
-// external crates used
-
 // submodules
 mod exceptions;
 mod hardware;

@@ -2,14 +2,19 @@
 #![cfg_attr(test, no_main)]
 #![feature(custom_test_frameworks)]
 #![feature(abi_x86_interrupt)]
+#![feature(alloc_error_handler)]
 #![test_runner(crate::test_runner)]
 #![reexport_test_harness_main = "test_main"]
+
+// enable the builtin alloc crate
+extern crate alloc;
 
 // external crates used
 use core::panic::PanicInfo;
 
 // submodules exports
 pub mod interrupts;
+pub mod memory;
 pub mod serial;
 pub mod vga;
 
@@ -25,23 +30,6 @@ pub fn init() {
     interrupts::idt::init();
     unsafe { interrupts::PICS.lock().initialize() };
     x86_64::instructions::interrupts::enable();
-}
-
-/// A function used during testing : run all the given tests.
-pub fn test_runner(tests: &[&dyn Fn()]) {
-    serial_println!("Running {} tests", tests.len());
-    for test in tests {
-        test();
-    }
-    exit_qemu(QemuExitCode::Success);
-}
-
-/// A function used during testing if test failed : print our error and exit.
-pub fn test_panic_handler(info: &PanicInfo) -> ! {
-    serial_println!("[failed]\n");
-    serial_println!("Error: {}\n", info);
-    exit_qemu(QemuExitCode::Failed);
-    loop {}
 }
 
 /// Function halting the kernel : an endless loop catching interrupts.
@@ -70,10 +58,19 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
     }
 }
 
+// ! ------------- testing -------------
+
+#[cfg(test)]
+use bootloader::{entry_point, BootInfo};
+
+// permits to check the signature of the entry point used in integration tests
+#[cfg(test)]
+entry_point!(test_kernel_main);
+
 /// Entry point of integration tests.
 #[cfg(test)]
 #[no_mangle]
-pub extern "C" fn _start() -> ! {
+fn test_kernel_main(_boot_info: &'static BootInfo) -> ! {
     init();
     test_main();
     loop {}
@@ -84,4 +81,21 @@ pub extern "C" fn _start() -> ! {
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     test_panic_handler(info)
+}
+
+/// A function used during testing : run all the given tests.
+pub fn test_runner(tests: &[&dyn Fn()]) {
+    serial_println!("Running {} tests", tests.len());
+    for test in tests {
+        test();
+    }
+    exit_qemu(QemuExitCode::Success);
+}
+
+/// A function used during testing if test failed : print our error and exit.
+pub fn test_panic_handler(info: &PanicInfo) -> ! {
+    serial_println!("[failed]\n");
+    serial_println!("Error: {}\n", info);
+    exit_qemu(QemuExitCode::Failed);
+    loop {}
 }
