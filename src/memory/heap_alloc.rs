@@ -1,5 +1,7 @@
+// internal function used
+use super::allocators::{fixed_size_blocks::FixedSizeBlockAllocator, Locked};
+
 // external crates used
-use linked_list_allocator::LockedHeap;
 use x86_64::{
     structures::paging::{
         mapper::MapToError, FrameAllocator, Mapper, Page, PageTableFlags, Size4KiB,
@@ -7,17 +9,22 @@ use x86_64::{
     VirtAddr,
 };
 
-// consts defining heap config
+// ! ------------- heap allocator -------------
+
+/// Starting point of the heap.
 pub const HEAP_START: usize = 0x_4444_4444_0000;
+/// Size of memory used for the heap.
 pub const HEAP_SIZE: usize = 100 * 1024; // 100 KiB
 
 #[global_allocator]
-static ALLOCATOR: LockedHeap = LockedHeap::empty();
+static ALLOCATOR: Locked<FixedSizeBlockAllocator> = Locked::new(FixedSizeBlockAllocator::new());
 
 #[alloc_error_handler]
 fn alloc_error_handler(layout: alloc::alloc::Layout) -> ! {
     panic!("allocation error: {:?}", layout)
 }
+
+// ! ------------- heap init -------------
 
 /// Permits to init the heap.
 ///
