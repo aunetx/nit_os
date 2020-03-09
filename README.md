@@ -26,11 +26,10 @@ Its goals are :
 
 A recent rust `nightly` compiler : probably `> 1.41.0`.
 
-You will need to install `cargo-xbuild` and `cargo-make` :
+You will need to install `cargo-xbuild`, `cargo-make` and `bootimage` crates :
 
 ```sh
-cargo install cargo-xbuild
-cargo install cargo-make
+cargo install cargo-xbuild cargo-make bootimage
 ```
 
 To boot into QEMU, you will need a decent version of it installed too.

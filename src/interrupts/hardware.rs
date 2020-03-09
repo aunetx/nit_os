@@ -40,6 +40,8 @@ impl InterruptIndex {
 
 // ! ------------- interrupts handlers -------------
 
+// TODO be able to "register" handler for interrupts (at compile-time?)
+
 /// Interrupt handler for the hardware timer interruption.
 ///
 /// By default, do nothing.
@@ -51,6 +53,7 @@ pub extern "x86-interrupt" fn timer_interrupt_handler(_stack_frame: &mut Interru
 }
 
 /// Interrupt handler for the hardware keyboard interruption.
+// TODO permit to register key interruptions
 pub extern "x86-interrupt" fn keyboard_interrupt_handler(_stack_frame: &mut InterruptStackFrame) {
     use pc_keyboard::{layouts, DecodedKey, HandleControl, Keyboard, ScancodeSet1};
     use x86_64::instructions::port::Port;
