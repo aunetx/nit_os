@@ -25,6 +25,11 @@ fn kernel_main(_boot_info: &'static BootInfo) -> ! {
 
     // ! ------------- testing part -------------
 
+    let mut cmos = unsafe { drivers::cmos::CMOS::new() };
+    let rtc = cmos.read_rtc(drivers::cmos::CMOSCenturyHandler::CenturyRegister(0x32));
+
+    println!("time: {:?}", rtc);
+
     // ! ------------- end of testing part -------------
 
     // define the entry of unit tests
