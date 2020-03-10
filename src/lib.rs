@@ -1,13 +1,18 @@
 #![no_std]
 #![cfg_attr(test, no_main)]
-#![feature(const_fn)]
-#![feature(custom_test_frameworks)]
-#![feature(alloc_layout_extra)]
-#![feature(const_in_array_repeat_expressions)]
-#![feature(abi_x86_interrupt)]
-#![feature(alloc_error_handler)]
 #![test_runner(crate::test_runner)]
 #![reexport_test_harness_main = "test_main"]
+#![feature(
+    // tests
+    custom_test_frameworks,
+    // exceptions
+    abi_x86_interrupt,
+    // allocator
+    const_fn,
+    alloc_layout_extra,
+    alloc_error_handler,
+    const_in_array_repeat_expressions
+)]
 
 // enable the builtin alloc crate
 extern crate alloc;
@@ -42,7 +47,8 @@ pub fn hlt_loop() -> ! {
     }
 }
 
-/// Defines the QEMU exit codes to be used when exiting with the `isa-debug-exit` argument.
+/// Defines the QEMU exit codes to be used when exiting with the
+/// `isa-debug-exit` argument.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u32)]
 pub enum QemuExitCode {
@@ -58,6 +64,13 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
         let mut port = Port::new(0xf4);
         port.write(exit_code as u32);
     }
+}
+
+/// The divergent function that the kernel throws when it encounter an allocation
+/// error.
+#[alloc_error_handler]
+fn alloc_error_handler(layout: alloc::alloc::Layout) -> ! {
+    panic!("allocation error: {:?}", layout)
 }
 
 // ! ------------- testing -------------

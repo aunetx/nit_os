@@ -19,11 +19,6 @@ pub const HEAP_SIZE: usize = 100 * 1024; // 100 KiB
 #[global_allocator]
 static ALLOCATOR: Locked<FixedSizeBlockAllocator> = Locked::new(FixedSizeBlockAllocator::new());
 
-#[alloc_error_handler]
-fn alloc_error_handler(layout: alloc::alloc::Layout) -> ! {
-    panic!("allocation error: {:?}", layout)
-}
-
 // ! ------------- heap init -------------
 
 /// Permits to init the heap.
