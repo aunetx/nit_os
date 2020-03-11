@@ -7,28 +7,28 @@ on:
     branches: [ master ]
 
 jobs:
-  build_and_test:
-
+  prerequesites:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    
-    # Install prerequesites
+
+    # Install rust nightly, add components rust-src and llvm-tools-preview
     - name: rust-toolchain
       uses: actions-rs/toolchain@v1.0.5
       with:
         toolchain: nightly
         components: rust-src, llvm-tools-preview
 
+    # Install cargo-make
     - name: Install cargo-make
       uses: davidB/rust-cargo-make@v1.2.1
 
+    # Install QEMU
     - name: Install QEMU
       uses: mstksg/get-package@v1
       with:
         apt-get: qemu
 
+    # Download and install binaries of cargo-xbuild
     - name: Download cargo-xbuild
       uses: carlosperate/download-file-action@v1.0.0
       with:
@@ -39,7 +39,8 @@ jobs:
       with:
         pathSource: cargo-xbuild.7z
         pathTarget: /home/runner/.cargo/bin
-    
+
+    # Download and install binaries of bootimage
     - name: Download bootimage
       uses: carlosperate/download-file-action@v1.0.0
       with:
@@ -50,12 +51,23 @@ jobs:
       with:
         pathSource: bootimage.7z
         pathTarget: /home/runner/.cargo/bin
-
+        
+  build:
+    needs: prerequesites
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
 
     # Build nit_os
     - name: Build
       run: cargo make --makefile make.toml build
+      
+  test:
+    needs: [prerequesites, build]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
 
     # Test nit_os
-    - name: Test
+    - name: Build
       run: cargo make --makefile make.toml test
