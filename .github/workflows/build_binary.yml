@@ -1,11 +1,9 @@
-name: Build release
+name: Build binary
 
 on:
   push:
     branches: 
       - master
-    #tags:
-    #  - v*
 
 jobs:
   build_bin:
