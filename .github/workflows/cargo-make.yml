@@ -13,9 +13,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Install cargo-make
       uses: davidB/rust-cargo-make@v1.2.1
-    - name: Install xbuild
-      run: cargo install cargo-xbuild
+
+    - name: Download cargo-xbuild
+      uses: carlosperate/download-file-action@v1.0.0
+      with:
+        file-url: https://github.com/aunetx/files_utils/blob/master/cargo-xbuild.7z?raw=true
+        file-name: cargo-xbuild.7z
+
+    - name: Exract cargo-xbuild
+      uses: DuckSoft/extract-7z-action@v1.0
+      with:
+        pathSource: cargo-xbuild.7z
+        pathTarget: /home/runner/.cargo/bin
+
     - name: Build and test
       run: cargo make --makefile make.toml build_test
