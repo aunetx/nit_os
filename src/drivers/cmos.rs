@@ -272,3 +272,19 @@ pub struct RTCDateTime {
     pub month: u8,
     pub year: usize,
 }
+
+// ! ------------- tests -------------
+
+// internal functions used
+#[cfg(test)]
+use crate::{serial_print, serial_println};
+
+#[test_case]
+fn test_cmos_rtc() {
+    serial_print!("test_cmos_rtc... ");
+
+    let mut cmos = unsafe { CMOS::new() };
+    let _ = cmos.read_rtc(CMOSCenturyHandler::CenturyRegister(0x32));
+
+    serial_println!("[ok]");
+}
