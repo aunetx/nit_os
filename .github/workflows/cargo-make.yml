@@ -29,5 +29,8 @@ jobs:
         pathSource: cargo-xbuild.7z
         pathTarget: /home/runner/.cargo/bin
 
-    - name: Build and test
-      run: cargo make --makefile make.toml build_test
+    - name: Build
+      run: cargo xbuild
+
+    - name: Test
+      run: cargo xtest
