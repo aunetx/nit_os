@@ -18,7 +18,7 @@ jobs:
       uses: actions-rs/toolchain@v1.0.5
       with:
         toolchain: nightly
-        components: rust-src
+        components: rust-src, llvm-tools-preview
 
     - name: Install cargo-make
       uses: davidB/rust-cargo-make@v1.2.1
