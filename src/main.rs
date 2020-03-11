@@ -20,17 +20,18 @@ entry_point!(kernel_main);
 /// The starting point of our kernel.
 #[no_mangle]
 fn kernel_main(_boot_info: &'static BootInfo) -> ! {
+    // ! ------------- initialisation -------------
     phase!(init(); "kernel init");
     println!("Everything seems to work!");
 
-    // ! ------------- testing part -------------
+    // ! ------------- main -------------
 
-    // ! ------------- end of testing part -------------
-
+    // ! ------------- tests -------------
     // define the entry of unit tests
     #[cfg(test)]
     test_main();
 
+    // ! ------------- halting -------------
     // halt the kernel
     hlt_loop();
 }
