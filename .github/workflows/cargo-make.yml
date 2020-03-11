@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  prerequesites:
+  build_test:
     runs-on: ubuntu-latest
     steps:
 
@@ -51,22 +51,10 @@ jobs:
       with:
         pathSource: bootimage.7z
         pathTarget: /home/runner/.cargo/bin
-        
-  build:
-    needs: prerequesites
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
 
     # Build nit_os
     - name: Build
       run: cargo make --makefile make.toml build
-      
-  test:
-    needs: [prerequesites, build]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
 
     # Test nit_os
     - name: Build
