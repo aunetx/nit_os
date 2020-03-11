@@ -30,7 +30,7 @@ jobs:
         pathTarget: /home/runner/.cargo/bin
 
     - name: Build
-      run: cargo xbuild
+      run: cargo +nightly xbuild
 
     - name: Test
-      run: cargo xtest
+      run: cargo +nightly xtest
