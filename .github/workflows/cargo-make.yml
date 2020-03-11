@@ -29,7 +29,7 @@ jobs:
         file-url: https://github.com/aunetx/files_utils/blob/master/cargo-xbuild.7z?raw=true
         file-name: cargo-xbuild.7z
 
-    - name: Exract cargo-xbuild
+    - name: Extract cargo-xbuild
       uses: DuckSoft/extract-7z-action@v1.0
       with:
         pathSource: cargo-xbuild.7z
@@ -37,6 +37,11 @@ jobs:
 
     - name: Build
       run: cargo +nightly xbuild
+      
+    - name: Get Package
+      uses: mstksg/get-package@v1
+      with:
+        apt-get: qemu
       
     - name: Install bootimage
       run: cargo install bootimage
