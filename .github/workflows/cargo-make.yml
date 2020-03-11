@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: rust-cargo-make
-      uses: davidB/rust-cargo-make@v1.2.1
     - name: Install xbuild
       run: cargo install cargo-xbuild
-    - name: Build and test
-      run: cargo make --makefile make.toml build_test
+    - name: Build
+      run: cargo xbuild
+    - name: Test
+      run: cargo xtest
