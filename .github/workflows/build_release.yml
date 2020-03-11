@@ -1,0 +1,61 @@
+name: Build release
+
+on:
+  push:
+    branches: 
+      - master
+    #tags:
+    #  - v*
+
+jobs:
+  build_bin:
+    runs-on: ubuntu-latest
+    steps:
+    # Clone repository
+    - uses: actions/checkout@v2
+
+    # Install rust nightly, add components rust-src and llvm-tools-preview
+    - name: rust-toolchain
+      uses: actions-rs/toolchain@v1.0.5
+      with:
+        toolchain: nightly
+        components: rust-src, llvm-tools-preview
+
+    # Install cargo-make
+    - name: Install cargo-make
+      uses: davidB/rust-cargo-make@v1.2.1
+
+    # Download and install binaries of cargo-xbuild
+    - name: Download cargo-xbuild
+      uses: carlosperate/download-file-action@v1.0.0
+      with:
+        file-url: https://github.com/aunetx/files_utils/blob/master/cargo-xbuild.7z?raw=true
+        file-name: cargo-xbuild.7z   
+    - name: Extract cargo-xbuild
+      uses: DuckSoft/extract-7z-action@v1.0
+      with:
+        pathSource: cargo-xbuild.7z
+        pathTarget: /home/runner/.cargo/bin
+
+    # Download and install binaries of bootimage
+    - name: Download bootimage
+      uses: carlosperate/download-file-action@v1.0.0
+      with:
+        file-url: https://github.com/aunetx/files_utils/blob/master/bootimage.7z?raw=true
+        file-name: bootimage.7z
+    - name: Extract bootimage
+      uses: DuckSoft/extract-7z-action@v1.0
+      with:
+        pathSource: bootimage.7z
+        pathTarget: /home/runner/.cargo/bin
+
+    # Build nit_os
+    - name: Build
+      run: cargo make --makefile make.toml build_release
+
+    # Upload binary as artifact
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: nit_os-x86_64.bin
+        path: target/x86_64-nit_os/release/bootimage-nit_os.bin
