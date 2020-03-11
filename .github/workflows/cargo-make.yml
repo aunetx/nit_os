@@ -10,6 +10,8 @@ jobs:
   build_test:
     runs-on: ubuntu-latest
     steps:
+    # Clone repository
+    - uses: actions/checkout@v2
 
     # Install rust nightly, add components rust-src and llvm-tools-preview
     - name: rust-toolchain
