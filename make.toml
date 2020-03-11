@@ -1,14 +1,14 @@
 [tasks.build]
 command = "cargo"
-args = ["xbuild"]
+args = ["+nightly", "xbuild"]
 
 [tasks.run]
 command = "cargo"
-args = ["xrun"]
+args = ["+nightly", "xrun"]
 
 [tasks.test]
 command = "cargo"
-args = ["xtest"]
+args = ["+nightly", "xtest"]
 
 [tasks.build_test]
 dependencies = [
