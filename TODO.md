@@ -59,6 +59,8 @@
 
 - [ ] allow userspace processes
 
-- [ ] support rust's `std`
+- [ ] implement `libc`
+
+- [ ] support rust's `std` : see [build-std](https://doc.rust-lang.org/nightly/cargo/reference/unstable.html#build-std)
 
 - [ ] support `gcc` etc
