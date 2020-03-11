@@ -14,6 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
+    # Install prerequesites
     - name: rust-toolchain
       uses: actions-rs/toolchain@v1.0.5
       with:
@@ -23,28 +24,38 @@ jobs:
     - name: Install cargo-make
       uses: davidB/rust-cargo-make@v1.2.1
 
+    - name: Install QEMU
+      uses: mstksg/get-package@v1
+      with:
+        apt-get: qemu
+
     - name: Download cargo-xbuild
       uses: carlosperate/download-file-action@v1.0.0
       with:
         file-url: https://github.com/aunetx/files_utils/blob/master/cargo-xbuild.7z?raw=true
-        file-name: cargo-xbuild.7z
-
+        file-name: cargo-xbuild.7z   
     - name: Extract cargo-xbuild
       uses: DuckSoft/extract-7z-action@v1.0
       with:
         pathSource: cargo-xbuild.7z
         pathTarget: /home/runner/.cargo/bin
-
-    - name: Build
-      run: cargo +nightly xbuild
-      
-    - name: Get Package
-      uses: mstksg/get-package@v1
+    
+    - name: Download bootimage
+      uses: carlosperate/download-file-action@v1.0.0
       with:
-        apt-get: qemu
-      
-    - name: Install bootimage
-      run: cargo install bootimage
+        file-url: https://github.com/aunetx/files_utils/blob/master/bootimage.7z?raw=true
+        file-name: bootimage.7z
+    - name: Extract bootimage
+      uses: DuckSoft/extract-7z-action@v1.0
+      with:
+        pathSource: bootimage.7z
+        pathTarget: /home/runner/.cargo/bin
 
+
+    # Build nit_os
+    - name: Build
+      run: cargo make --makefile make.toml build
+
+    # Test nit_os
     - name: Test
-      run: cargo +nightly xtest
+      run: cargo make --makefile make.toml test
