@@ -11,8 +11,8 @@ extern crate alloc;
 use nit_os::{
     init,
     memory::{
-        frame_alloc::{self, BootInfoFrameAllocator},
-        heap_alloc::{self, HEAP_SIZE},
+        heap::{self, HEAP_SIZE},
+        mapping::{self, BootInfoFrameAllocator},
     },
     serial_print, serial_println,
 };
@@ -29,9 +29,9 @@ fn main(boot_info: &'static BootInfo) -> ! {
     init();
 
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
-    let mut mapper = unsafe { frame_alloc::init(phys_mem_offset) };
+    let mut mapper = unsafe { mapping::init(phys_mem_offset) };
     let mut frame_allocator = unsafe { BootInfoFrameAllocator::init(&boot_info.memory_map) };
-    heap_alloc::init(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
+    heap::init(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
 
     test_main();
     loop {}
