@@ -112,6 +112,7 @@ impl Writer {
     }
 
     /// Write a single ASCII character to the VGA buffer.
+    // TODO implement ansi color escapes (so we can use `ansi_rgb`)
     fn write_byte(&mut self, byte: u8) {
         match byte {
             b'\n' => self.new_line(),

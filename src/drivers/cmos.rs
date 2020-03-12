@@ -166,6 +166,7 @@ impl CMOS {
     /// let rtc = cmos.read_rtc(CMOSCenturyHandler::CurrentYear(2020));
     /// ```
     // FIXME this method is way too slow to be used inside the kernel
+    // TODO auto-detect presence of `CenturyRegister`
     pub fn read_rtc(&mut self, century_handler: CMOSCenturyHandler) -> RTCDateTime {
         let mut rtc_time = RTCDateTime {
             second: 0,
