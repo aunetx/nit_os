@@ -37,3 +37,6 @@ test-args = ["-device", "isa-debug-exit,iobase=0xf4,iosize=0x04", "-serial", "st
 # add the "-S" option to stop on opening (to continue with qemu)
 run-args = ["-s"]
 test-success-exit-code = 33
+
+[profile.release]
+lto = true
