@@ -1,7 +1,10 @@
-// internal functions used
+//! Defines functions to be called when an hardware interrupt occurs.
+//!
+
+// internal crate
 use crate::{clear_screen, print};
 
-// external crates used
+// external crates
 use lazy_static::lazy_static;
 use pic8259_simple::ChainedPics;
 use spin::Mutex;

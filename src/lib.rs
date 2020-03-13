@@ -1,6 +1,70 @@
+/*!
+# nit_os
+
+![Make](https://github.com/aunetx/nit_os/workflows/Make/badge.svg)
+![Build binary](https://github.com/aunetx/nit_os/workflows/Build%20binary/badge.svg)
+
+`nit_os` is a toy os written in rust, following [phil-opp's blog](https://os.phil-opp.com/).
+
+## Getting started
+
+### Description
+
+This projects tries to create a working kernel for `x86_64` architecture, with a simple architecture yet the most complete possible.
+
+It will probably not be *UNIX-compatible, and may not see userspace toolchain soon.
+
+Its goals are :
+
+- modularity / reusability through a complete library
+- complete hardware support (graphics, pci, usb...)
+- efficient multitasking / multiprocessing
+- support for rust std?
+- a complete graphical session
+- simplicity of configuration (but config could be done at compile-time)
+- easily understandable and well-documented
+- easily runnable (inside AND outside QEMU)
+- support for BIOS, UEFI and arbitrary bootloader
+
+### Prerequesites
+
+A recent rust `nightly` compiler : probably `> 1.41.0`.
+
+You will need to install `cargo-xbuild`, `cargo-make` and `bootimage` crates :
+
+```sh
+cargo install cargo-xbuild cargo-make bootimage
+```
+
+To boot into QEMU, you will need a decent version of it installed too.
+
+That should be all, tell me if I forgot anything!
+
+### Running it
+
+Thanks to `cargo-make`, running the kernel is as simple as :
+
+```sh
+cargo make --makefile make.toml run
+```
+
+To run the tests (usefull to check for breaking changes) :
+
+```sh
+cargo make --makefile make.toml build_test
+```
+
+## Contributing
+
+Every contribution is welcome, wether you are fluent in os dev or not!
+
+You can start by reading [TODO](./TODO.md) and [ROADMAP](./ROADMAP.md). You can contact me if you have any question, and feel free to send pull request / open an issue whenever you want.
+
+*/
+
 #![no_std]
 #![cfg_attr(test, no_main)]
-#![test_runner(crate::test_runner)]
+#![test_runner(crate::architecture::testing::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 #![feature(
     // tests
@@ -17,100 +81,8 @@
 // enable the builtin alloc crate
 extern crate alloc;
 
-// external crates used
-use core::panic::PanicInfo;
-
 // submodules exports
+pub mod architecture;
 pub mod drivers;
 pub mod interrupts;
 pub mod memory;
-
-/// Initialize our kernel.
-///
-/// The default steps are :
-/// - init GDT : `Global Descriptor Table`
-/// - init IDT : `Interrupt Descriptor Table`
-/// - init PICs chips : `Programmable Interrupt Controller`
-/// - enable interrupts with asm instruction `sti`
-pub fn init() {
-    interrupts::gdt::init();
-    interrupts::idt::init();
-    unsafe { interrupts::PICS.lock().initialize() };
-    x86_64::instructions::interrupts::enable();
-}
-
-/// Function halting the kernel : an endless loop catching interrupts.
-pub fn hlt_loop() -> ! {
-    x86_64::instructions::interrupts::disable();
-    loop {
-        x86_64::instructions::hlt();
-    }
-}
-
-/// Defines the QEMU exit codes to be used when exiting with the
-/// `isa-debug-exit` argument.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[repr(u32)]
-pub enum QemuExitCode {
-    Success = 0x10,
-    Failed = 0x11,
-}
-
-/// Exit QEMU via the `isa-debug-exit` port, with the given exit code.
-pub fn exit_qemu(exit_code: QemuExitCode) {
-    use x86_64::instructions::port::Port;
-
-    unsafe {
-        let mut port = Port::new(0xf4);
-        port.write(exit_code as u32);
-    }
-}
-
-/// The divergent function that the kernel throws when it encounter an allocation
-/// error.
-#[alloc_error_handler]
-fn alloc_error_handler(layout: alloc::alloc::Layout) -> ! {
-    panic!("allocation error: {:?}", layout)
-}
-
-// ! ------------- testing -------------
-
-#[cfg(test)]
-use bootloader::{entry_point, BootInfo};
-
-// permits to check the signature of the entry point used in integration tests
-#[cfg(test)]
-entry_point!(test_kernel_main);
-
-/// Entry point of integration tests.
-#[cfg(test)]
-#[no_mangle]
-fn test_kernel_main(_boot_info: &'static BootInfo) -> ! {
-    init();
-    test_main();
-    loop {}
-}
-
-/// Panic handler for integration tests.
-#[cfg(test)]
-#[panic_handler]
-fn panic(info: &PanicInfo) -> ! {
-    test_panic_handler(info)
-}
-
-/// A function used during testing : run all the given tests.
-pub fn test_runner(tests: &[&dyn Fn()]) {
-    serial_println!("Running {} tests", tests.len());
-    for test in tests {
-        test();
-    }
-    exit_qemu(QemuExitCode::Success);
-}
-
-/// A function used during testing if test failed : print our error and exit.
-pub fn test_panic_handler(info: &PanicInfo) -> ! {
-    serial_println!("[failed]\n");
-    serial_println!("Error: {}\n", info);
-    exit_qemu(QemuExitCode::Failed);
-    loop {}
-}

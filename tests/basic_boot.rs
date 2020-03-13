@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 #![feature(custom_test_frameworks)]
-#![test_runner(nit_os::test_runner)]
+#![test_runner(nit_os::architecture::testing::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
 use core::panic::PanicInfo;
@@ -16,7 +16,7 @@ pub extern "C" fn _start() -> ! {
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    nit_os::test_panic_handler(info)
+    nit_os::architecture::testing::test_panic_handler(info)
 }
 
 #[test_case]

@@ -1,14 +1,18 @@
-// external crates used
+//! Permits to map virtual memory to physical memory.
+//!
+
+// external crates
 use bootloader::bootinfo::{MemoryMap, MemoryRegionType};
 use x86_64::{
     registers::control::Cr3,
     structures::paging::{
-        FrameAllocator, OffsetPageTable, PageTable, PhysFrame, Size4KiB, UnusedPhysFrame,
+        mapper, FrameAllocator, Mapper, OffsetPageTable, Page, PageTable, PhysFrame, Size4KiB,
+        UnusedPhysFrame,
     },
     PhysAddr, VirtAddr,
 };
 
-/// Initialize a new OffsetPageTable.
+/// Initialize a new `OffsetPageTable`.
 ///
 /// ## Safety
 ///
@@ -41,14 +45,14 @@ unsafe fn active_level_4_table(physical_memory_offset: VirtAddr) -> &'static mut
 
 // ! ------------- boot info frame allocator -------------
 
-/// A FrameAllocator that returns usable frames from the bootloader's memory map.
+/// A `FrameAllocator` that returns usable frames from the bootloader's memory map.
 pub struct BootInfoFrameAllocator {
     memory_map: &'static MemoryMap,
     next: usize,
 }
 
 impl BootInfoFrameAllocator {
-    /// Create a FrameAllocator from the passed memory map.
+    /// Create a `FrameAllocator` from the passed memory map.
     ///
     /// ## Safety
     ///

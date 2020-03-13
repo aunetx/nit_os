@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 #![feature(custom_test_frameworks)]
-#![test_runner(nit_os::test_runner)]
+#![test_runner(nit_os::architecture::testing::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
 // the actual library
@@ -19,10 +19,12 @@ entry_point!(kernel_main);
 
 /// The starting point of our kernel.
 #[no_mangle]
-fn kernel_main(_boot_info: &'static BootInfo) -> ! {
+fn kernel_main(boot_info: &'static BootInfo) -> ! {
     // ! ------------- init -------------
-    phase!(init(); "kernel init");
-    println!("Everything seems to work!");
+    phase!(architecture::init(); "kernel init");
+
+    // ! ------------- heap -------------
+    let (_, _) = phase!(memory::init(boot_info); "heap init");
 
     // ! ------------- main -------------
 
@@ -33,7 +35,7 @@ fn kernel_main(_boot_info: &'static BootInfo) -> ! {
 
     // ! ------------- halt -------------
     // halt the kernel
-    hlt_loop();
+    architecture::hlt_loop();
 }
 
 /// This function is called on panic.
@@ -48,12 +50,12 @@ pub fn panic(info: &PanicInfo) -> ! {
     );
     println_color!(red " {}", info);
 
-    hlt_loop();
+    architecture::hlt_loop();
 }
 
 // if in unit test, print to serial and exit QEMU
 #[cfg(test)]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    test_panic_handler(info)
+    architecture::testing::test_panic_handler(info)
 }

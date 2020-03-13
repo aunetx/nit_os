@@ -4,6 +4,11 @@ version = "0.1.0"
 authors = ["aunetx <aunetx@yandex.com>"]
 edition = "2018"
 
+[features]
+default = ["amd64", "qemu"]
+amd64 = []
+qemu = []
+
 [[test]]
 name = "should_panic"
 harness = false

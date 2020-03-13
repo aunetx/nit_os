@@ -1,3 +1,9 @@
+//! This module enables the use of the `CMOS` chip inside the kernel.
+//!
+//! It is not stable yet, as the implementation is very slow and does not detect
+//! automatically the presence of `CenturyRegister` in the `CMOS` chip.
+//!
+
 /*
 Note: this code is forked and very from github.com/noahrinehart/cmos
 It is licensed under the MIT license.

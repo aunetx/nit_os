@@ -1,7 +1,13 @@
-// internal functions used
+//! This module permits to use the `VGA` screen.
+//!
+//! It currently only support text mode, but should later support others mode and
+//! evolve in a real graphic module.
+//!
+
+// internal crate
 use core::fmt;
 
-// external crates used
+// external crates
 use core::fmt::Write;
 use lazy_static::lazy_static;
 use spin::Mutex;
@@ -241,9 +247,12 @@ macro_rules! phase {
         $crate::println_color!(green "[ done ]");
     );
     ($e:expr; $($arg:tt)*) => (
-        $crate::print_color!(drivers::vga::Color::LightGray, drivers::vga::Color::Black, "[ {} ] ... ", format_args!($($arg)*));
-        $e;
-        $crate::phase!(done);
+        {
+            $crate::print_color!(drivers::vga::Color::LightGray, drivers::vga::Color::Black, "[ {} ] ... ", format_args!($($arg)*));
+            let a = $e;
+            $crate::phase!(done);
+            a
+        }
     );
     ($($arg:tt)*) => (
         $crate::print_color!(drivers::vga::Color::LightGray, drivers::vga::Color::Black,  "[ {} ] ... ", format_args!($($arg)*));

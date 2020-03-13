@@ -1,4 +1,7 @@
-// external crates used
+//! Permits to init the `GDT` and load the `Interrupt Descriptor Table`.
+//!
+
+// external crates
 use lazy_static::lazy_static;
 use x86_64::{
     instructions::{segmentation::set_cs, tables::load_tss},

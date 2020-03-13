@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 #![feature(custom_test_frameworks)]
-#![test_runner(nit_os::test_runner)]
+#![test_runner(nit_os::architecture::testing::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
 // enable the builtin alloc crate
@@ -9,7 +9,7 @@ extern crate alloc;
 
 // internal functions used
 use nit_os::{
-    init,
+    architecture::init,
     memory::{
         heap::{self, HEAP_SIZE},
         mapping::{self, BootInfoFrameAllocator},
@@ -39,7 +39,7 @@ fn main(boot_info: &'static BootInfo) -> ! {
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    nit_os::test_panic_handler(info)
+    nit_os::architecture::testing::test_panic_handler(info)
 }
 
 #[test_case]

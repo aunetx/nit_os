@@ -1,7 +1,13 @@
-// internal functions used
+//! This module contains the `FixedSizeBlockAllocator`.
+//!
+//! It is probably the allocator you want to use, but this implementation is not
+//! complete yet.
+//!
+
+// internal crate
 use super::Locked;
 
-// external crates used
+// external crates
 use alloc::alloc::GlobalAlloc;
 use alloc::alloc::Layout;
 use core::{mem, ptr};

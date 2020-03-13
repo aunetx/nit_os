@@ -4,7 +4,10 @@
 
 use core::panic::PanicInfo;
 use lazy_static::lazy_static;
-use nit_os::{exit_qemu, serial_print, serial_println, QemuExitCode};
+use nit_os::{
+    architecture::qemu::{exit, QemuExitCode},
+    serial_print, serial_println,
+};
 use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
 
 #[no_mangle]
@@ -27,7 +30,7 @@ fn stack_overflow() {
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    nit_os::test_panic_handler(info)
+    nit_os::architecture::testing::test_panic_handler(info)
 }
 
 // we must redefine our IDT to use a custom double fault handler
@@ -39,8 +42,7 @@ extern "x86-interrupt" fn test_double_fault_handler(
     _error_code: u64,
 ) -> ! {
     serial_println!("[ok]");
-    exit_qemu(QemuExitCode::Success);
-    loop {}
+    exit(QemuExitCode::Success);
 }
 
 lazy_static! {

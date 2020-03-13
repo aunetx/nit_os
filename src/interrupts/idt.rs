@@ -1,7 +1,10 @@
-// internal functions used
+//! Permits to load functions to be called for exceptions and interrupts.
+//!
+
+// internal crate
 use super::{exceptions, gdt, hardware};
 
-// external crates used
+// external crates
 use lazy_static::lazy_static;
 use x86_64::structures::idt::InterruptDescriptorTable;
 

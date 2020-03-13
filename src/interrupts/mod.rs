@@ -1,3 +1,8 @@
+//! This module contains utils set interrupts handlers.
+//!
+//! It should be used in the first parts of kernel init.
+//!
+
 // submodules
 mod exceptions;
 mod hardware;
@@ -11,7 +16,7 @@ pub use hardware::PICS;
 
 // ! ------------- tests -------------
 
-// internal functions used
+// internal crate
 #[cfg(test)]
 use crate::{serial_print, serial_println};
 

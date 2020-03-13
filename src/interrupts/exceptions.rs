@@ -1,7 +1,10 @@
-// internal functions used
+//! Defines functions to be called when an exception occurs.
+//!
+
+// internal crate
 use crate::println;
 
-// external crates used
+// external crates
 use x86_64::{
     registers::control::Cr2,
     structures::idt::{InterruptStackFrame, PageFaultErrorCode},

@@ -1,7 +1,13 @@
-// internal functions used
+//! This module contains the `BumpAllocator`.
+//!
+//! It is probably not what you want, excepted if you want to be fast and
+//! you know what you are doing.
+//!
+
+// internal crate
 use super::{align_up, Locked};
 
-// external crates used
+// external crates
 use alloc::alloc::{GlobalAlloc, Layout};
 use core::ptr;
 

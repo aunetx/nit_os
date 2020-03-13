@@ -2,14 +2,16 @@
 #![no_main]
 
 use core::panic::PanicInfo;
-use nit_os::{exit_qemu, serial_print, serial_println, QemuExitCode};
+use nit_os::{
+    architecture::qemu::{exit, QemuExitCode},
+    serial_print, serial_println,
+};
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     should_fail();
     serial_println!("[test did not panic]");
-    exit_qemu(QemuExitCode::Failed);
-    loop {}
+    exit(QemuExitCode::Failed);
 }
 
 fn should_fail() {
@@ -20,6 +22,5 @@ fn should_fail() {
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
     serial_println!("[ok]");
-    exit_qemu(QemuExitCode::Success);
-    loop {}
+    exit(QemuExitCode::Success);
 }

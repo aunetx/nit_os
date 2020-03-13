@@ -1,4 +1,9 @@
-// external crates used
+//! This module permits the use of a serial port to transmit data, notably text.
+//!
+//! It is mainly used during testing, but may evolve.
+//!
+
+// external crates
 use lazy_static::lazy_static;
 use spin::Mutex;
 use uart_16550::SerialPort;

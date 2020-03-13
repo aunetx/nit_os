@@ -1,7 +1,13 @@
-// internal functions used
+//! This module contains the `LinkedListAllocator`.
+//!
+//! It may be a good allocator, but it needs to be used with caution : to much
+//! load makes it very slow.
+//!
+
+// internal crate
 use super::{align_up, Locked};
 
-// external crates used
+// external crates
 use alloc::alloc::{GlobalAlloc, Layout};
 use core::{mem, ptr};
 

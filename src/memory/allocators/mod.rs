@@ -1,3 +1,9 @@
+//! This module contains differents allocators to use.
+//!
+//! None of them is feature-complete, but they work well.
+//!
+
+// submodules export
 pub mod bump;
 pub mod fixed_size_blocks;
 pub mod linked_list;
