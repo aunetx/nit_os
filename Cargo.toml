@@ -24,7 +24,6 @@ x86_64 = "0.9.6"
 # helpers
 linked_list_allocator = "0.8.1"
 cpuio = "0.2.0"
-ansi_rgb = "0.2.0"
 
 # hardware-dependent
 uart_16550 = "0.2.4"
