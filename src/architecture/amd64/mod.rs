@@ -24,7 +24,14 @@ pub fn init() {
 }
 
 /// Function halting the kernel : an endless loop catching interrupts.
-pub fn hlt_loop() -> ! {
+pub fn halt_loop() -> ! {
+    loop {
+        instructions::hlt();
+    }
+}
+
+/// Function "stopping" the kernel : an endless loop without interrupts.
+pub fn stop_loop() -> ! {
     instructions::interrupts::disable();
     loop {
         instructions::hlt();

@@ -35,7 +35,7 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
 
     // ! ------------- halt -------------
     // halt the kernel
-    architecture::hlt_loop();
+    architecture::halt_loop();
 }
 
 /// This function is called on panic.
@@ -50,7 +50,7 @@ pub fn panic(info: &PanicInfo) -> ! {
     );
     println_color!(red " {}", info);
 
-    architecture::hlt_loop();
+    architecture::stop_loop();
 }
 
 // if in unit test, print to serial and exit QEMU
