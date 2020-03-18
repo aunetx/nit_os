@@ -1,12 +1,10 @@
 {
-    "rust.clippy_preference": "on",
     "rust.all_targets": false,
-    "rust-client.channel": "nightly",
     "rust.target": "x86_64-nit_os.json",
     "rust.sysroot": "/home/aunetx/Documents/github/nit_os/target/sysroot",
-    "rust.rustflags": "-L dependency=/home/aunetx/Documents/github/nit_os/target/sysroot/lib/rustlib/x86_64-nit_os/lib",
     "code-runner.executorMap": {
         "rust": "cargo make --makefile make.toml build_test #$fileName",
     },
-    "code-runner.customCommand": "cargo make --makefile make.toml run #$fileName"
+    "code-runner.customCommand": "cargo make --makefile make.toml run #$fileName",
+    "rust-client.channel": "nightly"
 }

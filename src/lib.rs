@@ -71,7 +71,7 @@ You can start by reading [TODO](./TODO.md) and [ROADMAP](./ROADMAP.md). You can 
     custom_test_frameworks,
     // exceptions
     abi_x86_interrupt,
-    // allocator
+    // allocators
     const_fn,
     alloc_layout_extra,
     alloc_error_handler,
