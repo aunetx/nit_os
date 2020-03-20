@@ -26,9 +26,7 @@ jobs:
 
     # Install QEMU
     - name: Install QEMU
-      uses: mstksg/get-package@v1
-      with:
-        apt-get: qemu
+      run: apt update && apt install qemu
 
     # Download and install binaries of cargo-xbuild
     - name: Download cargo-xbuild
