@@ -6,5 +6,6 @@
         "rust": "cargo make --makefile make.toml build_test #$fileName",
     },
     "code-runner.customCommand": "cargo make --makefile make.toml run #$fileName",
-    "rust-client.channel": "nightly"
+    "rust-client.channel": "nightly",
+    "rust-analyzer.cargo-watch.command": "xcheck"
 }

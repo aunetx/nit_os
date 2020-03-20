@@ -1,5 +1,8 @@
 [build]
 target = "x86_64-nit_os.json"
 
+[alias]
+m = "make --makefile make.toml"
+
 [target.'cfg(target_os = "none")']
 runner = "bootimage runner"
