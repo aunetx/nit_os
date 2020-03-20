@@ -10,7 +10,7 @@ use nit_os::*;
 // enable the builtin alloc crate
 extern crate alloc;
 
-// external crates used
+// external crates
 use bootloader::{entry_point, BootInfo};
 use core::panic::PanicInfo;
 
