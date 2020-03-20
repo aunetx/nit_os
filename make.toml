@@ -1,19 +1,26 @@
+[tasks.install_bootimage]
+install_crate = { crate_name = "bootimage", binary = "cargo", test_arg = ["--help"] }
+
 [tasks.build]
+dependencies = ["install_bootimage"]
 toolchain = "nightly"
 command = "cargo"
 args = ["xbuild"]
 
 [tasks.build_release]
+dependencies = ["install_bootimage"]
 toolchain = "nightly"
 command = "cargo"
 args = ["bootimage", "--release"]
 
 [tasks.run]
+dependencies = ["install_bootimage"]
 toolchain = "nightly"
 command = "cargo"
 args = ["xrun"]
 
 [tasks.test]
+dependencies = ["install_bootimage"]
 toolchain = "nightly"
 command = "cargo"
 args = ["xtest"]
@@ -21,5 +28,5 @@ args = ["xtest"]
 [tasks.build_test]
 dependencies = [
     "build",
-    "test"
+    "test",
 ]

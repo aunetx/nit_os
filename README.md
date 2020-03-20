@@ -27,31 +27,75 @@ Its goals are :
 
 ### Prerequesites
 
-A recent rust `nightly` compiler : probably `> 1.41.0`.
+You need a recent rust `nightly` compiler : probably `> 1.41.0`. If you don't have nightly, it should be automatically installed during first compilation.
 
-You will need to install `cargo-xbuild`, `cargo-make` and `bootimage` crates :
+Install QEMU following the [instructions for your OS](https://www.qemu.org/download/). For ubuntu :
+
+```sh
+apt install qemu
+```
+
+Then install `cargo-make` :
+
+```sh
+cargo install cargo-make
+```
+
+### Running
+
+Run `cargo-make`, depending on your willing :
+
+- to build the kernel :
+
+    ```sh
+    cargo m
+    ```
+
+- to run it :
+
+    ```sh
+    cargo m run
+    ```
+
+- to pass the tests, usefull to check for breaking changes :
+
+    ```sh
+    cargo m build_test
+    ```
+
+Actually, `cargo m` is just a sugar for `cargo make --makefile make.toml`.
+
+That should be all, tell me if I forgot anything!
+
+### Without `cargo-make`
+
+`cargo-make` will automatically install required dependencies, and run QEMU.
+
+To use this kernel without `cargo-make`, you need to install yourself required dependencies :
 
 ```sh
 cargo install cargo-xbuild cargo-make bootimage
 ```
 
-To boot into QEMU, you will need a decent version of it installed too.
-
-That should be all, tell me if I forgot anything!
-
-### Running it
-
-Thanks to `cargo-make`, running the kernel is as simple as :
+Then, you can build the kernel :
 
 ```sh
-cargo make --makefile make.toml run
+cargo xbuild
 ```
 
-To run the tests (usefull to check for breaking changes) :
+Or run it :
 
 ```sh
-cargo make --makefile make.toml build_test
+cargo xrun
 ```
+
+Or pass the tests :
+
+```sh
+cargo xtest
+```
+
+Compiling by hand seems easier than using `cargo-make`. However, this tool will maybe be used a lot more soon to automatize builds : that's why it is the recommended method.
 
 ## Contributing
 
