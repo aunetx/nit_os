@@ -2,9 +2,15 @@ name: Make
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+    paths:
+      - '!*.md'
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
+    paths:
+      - '!*.md'
 
 jobs:
   build_test:
