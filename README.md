@@ -1,7 +1,7 @@
 # nit_os
 
-![Make](https://github.com/aunetx/nit_os/workflows/Make/badge.svg)
-![Build binary](https://github.com/aunetx/nit_os/workflows/Build%20binary/badge.svg)
+[![Make](https://github.com/aunetx/nit_os/workflows/Make/badge.svg)](https://github.com/aunetx/nit_os/actions?query=workflow%3AMake)
+[![Build binary](https://github.com/aunetx/nit_os/workflows/Build%20binary/badge.svg)](https://github.com/aunetx/nit_os/actions?query=workflow%3A%22Build+binary%22)
 
 `nit_os` is a toy os written in rust, following [phil-opp's blog](https://os.phil-opp.com/).
 
