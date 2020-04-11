@@ -7,5 +7,6 @@
     },
     "code-runner.customCommand": "cargo m run #$fileName",
     "rust-client.channel": "nightly",
-    "rust-analyzer.cargo-watch.command": "xcheck"
+    "rust-analyzer.cargo-watch.command": "xcheck",
+    "rust-analyzer.checkOnSave.command": "xcheck"
 }
