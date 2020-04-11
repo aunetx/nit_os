@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Attach to QEMU",
+            "name": "Launch with QEMU",
             "type": "gdb",
             "request": "attach",
             "executable": "${workspaceRoot}/target/x86_64-nit_os/debug/nit_os",
@@ -15,6 +15,17 @@
             "gdbpath": "gdb-multiarch",
             "valuesFormatting": "prettyPrinters",
             "preLaunchTask": "cargo_xrun_debug"
+        },
+        {
+            "name": "Attach to QEMU",
+            "type": "gdb",
+            "request": "attach",
+            "executable": "${workspaceRoot}/target/x86_64-nit_os/debug/nit_os",
+            "target": "localhost:1234",
+            "remote": true,
+            "cwd": "${workspaceRoot}",
+            "gdbpath": "gdb-multiarch",
+            "valuesFormatting": "prettyPrinters"
         }
     ]
 }
