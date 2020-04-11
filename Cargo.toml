@@ -24,10 +24,11 @@ bootloader = { version = "0.9.0", features = ["map_physical_memory"]}
 lazy_static = {version ="1.4.0", features = ["spin_no_std"]}
 volatile = "0.2.6"
 spin = "0.5.2"
+# TODO update crate `x86_64`
 x86_64 = "0.9.6"
 
 # helpers
-linked_list_allocator = "0.8.1"
+linked_list_allocator = "0.8.2"
 cpuio = "0.2.0"
 
 # hardware-dependent

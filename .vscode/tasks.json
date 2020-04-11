@@ -1,0 +1,17 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "cargo_xrun_debug",
+            "type": "shell",
+            "command": "kitty --detach --start-as minimized sh -c 'qemu-system-x86_64 -drive format=raw,file=target/x86_64-nit_os/debug/bootimage-nit_os.bin -s -S' && sleep 2",
+            "group": "build",
+            "presentation": {
+                "reveal": "never",
+                "panel": "new"
+            }
+        }
+    ]
+}
