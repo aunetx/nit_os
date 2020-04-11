@@ -108,8 +108,6 @@ unsafe impl GlobalAlloc for Locked<FixedSizeBlockAllocator> {
         }
     }
 
-    // FIXME understand this clippy lint
-    #[allow(clippy::cast_ptr_alignment)]
     unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
         let mut allocator = self.lock();
         match list_index(&layout) {
