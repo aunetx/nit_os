@@ -7,7 +7,7 @@ use x86_64::{
     registers::control::Cr3,
     structures::paging::{
         mapper::MapToError, FrameAllocator, Mapper, OffsetPageTable, Page, PageTable, PhysFrame,
-        Size4KiB, UnusedPhysFrame,
+        Size4KiB,
     },
     PhysAddr, VirtAddr,
 };
@@ -86,7 +86,9 @@ pub fn alloc_stack(
         let frame = frame_allocator
             .allocate_frame()
             .ok_or(MapToError::FrameAllocationFailed)?;
-        mapper.map_to(page, frame, flags, frame_allocator)?.flush();
+        unsafe {
+            mapper.map_to(page, frame, flags, frame_allocator)?.flush();
+        }
     }
     Ok(StackBounds {
         start: stack_start.start_address(),
@@ -118,7 +120,7 @@ impl BootInfoFrameAllocator {
     }
 
     /// Returns an iterator over the usable frames specified in the memory map.
-    fn usable_frames(&self) -> impl Iterator<Item = UnusedPhysFrame> {
+    fn usable_frames(&self) -> impl Iterator<Item = PhysFrame> {
         // get usable regions from memory map
         let regions = self.memory_map.iter();
         let usable_regions = regions.filter(|r| r.region_type == MemoryRegionType::Usable);
@@ -129,12 +131,13 @@ impl BootInfoFrameAllocator {
         // create `PhysFrame` types from the start addresses
         let frames = frame_addresses.map(|addr| PhysFrame::containing_address(PhysAddr::new(addr)));
         // we know that the frames are really unused
-        frames.map(|f| unsafe { UnusedPhysFrame::new(f) })
+        // FIXME verify that `PhysFrame::from(f)` is equivalent to pre 9.6's `UnusedPhysFrame::new(f)`
+        frames.map(|f| PhysFrame::from(f))
     }
 }
 
 unsafe impl FrameAllocator<Size4KiB> for BootInfoFrameAllocator {
-    fn allocate_frame(&mut self) -> Option<UnusedPhysFrame> {
+    fn allocate_frame(&mut self) -> Option<PhysFrame> {
         let frame = self.usable_frames().nth(self.next);
         self.next += 1;
         frame
