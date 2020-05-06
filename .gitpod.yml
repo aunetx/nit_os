@@ -1,8 +1,9 @@
 tasks:
-  - init: rustup toolchain install nightly
-  - init: rustup default nightly
-  - init: rustup component add rust-src llvm-tools-preview
-  - init: cargo install cargo-make cargo-xbuild bootimage
+  - init: rustup default nightly && rustup component add rust-src llvm-tools-preview && cargo install cargo-make cargo-xbuild bootimage
   - command: cargo make --makefile make.toml build_test
 image:
   file: .gitpod.Dockerfile
+vscode:
+  extensions:
+    - serayuzgur.crates@0.4.7:HMkoguLcXp9M3ud7ac3eIw==
+    - bungcip.better-toml@0.3.2:3QfgGxxYtGHfJKQU7H0nEw==
