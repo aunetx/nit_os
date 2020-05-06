@@ -10,5 +10,5 @@ USER root
 # More information: https://www.gitpod.io/docs/config-docker/
 
 RUN apt-get -q update \
-    && apt-get install -y qemu \
+    && apt-get install -yq qemu \
     && apt-get clean && rm -rf /var/cache/apt/* && rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*

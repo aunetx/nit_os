@@ -1,5 +1,7 @@
 tasks:
-  - init: rustup toolchain install nightly && rustup default nightly && rustup component add rust-src llvm-tools-preview
+  - init: rustup toolchain install nightly
+  - init: rustup default nightly
+  - init: rustup component add rust-src llvm-tools-preview
   - init: cargo install cargo-make cargo-xbuild bootimage
   - command: cargo make --makefile make.toml build_test
 image:
