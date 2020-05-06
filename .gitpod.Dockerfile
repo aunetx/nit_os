@@ -1,6 +1,6 @@
-FROM gitpod/workspace-full
+FROM gitpod/workspace-full:latest
                     
-USER gitpod
+USER root
 
 # Install custom tools, runtime, etc. using apt-get
 # For example, the command below would install "bastet" - a command line tetris clone:
@@ -9,13 +9,6 @@ USER gitpod
 #
 # More information: https://www.gitpod.io/docs/config-docker/
 
-RUN sudo apt-get -q update \
-    && sudo apt-get install qemu \
-    && sudo rm -rf /var/lib/apt/lists/*
-
-RUN rustup toolchain install nightly \
-    && rustup default nightly \
-    && rustup component add rust-src llvm-tools-preview
-
-# TODO download prebuilt package
-RUN cargo install cargo-make cargo-xbuild bootimage
+RUN apt-get -q update \
+    && apt-get install -y qemu \
+    && apt-get clean && rm -rf /var/cache/apt/* && rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
